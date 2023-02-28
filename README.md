@@ -1,1 +1,1 @@
-# social-crop
+# socialCrop
