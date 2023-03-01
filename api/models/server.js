@@ -1,43 +1,41 @@
-const express = require('express');
-const cors = require('cors');
-const http = require('http');
-const uploadsRouter = require('../routes/uploads.router');
-const fileUpload = require('express-fileupload');
-
-
+const express = require('express')
+const cors = require('cors')
+const http = require('http')
+const uploadsRouter = require('../routes/uploads.router')
+const fileUpload = require('express-fileupload')
 
 class Server {
-  constructor() {
-    this.app = express();
-    this.PORT = process.env.PORT || 9000;
-    this.server = http.createServer(this.app);
+  constructor () {
+    this.app = express()
+    this.PORT = process.env.PORT || 9000
+    this.server = http.createServer(this.app)
     this.paths = {
       uploads: '/api/v1/upload/',
-      user: '/api/v1/users',
-    };
+      user: '/api/v1/users'
+    }
 
-    this.middlewares();
-    this.routes();
+    this.middleware()
+    this.routes()
   }
 
-  routes() {
-    this.app.use(this.paths.uploads, uploadsRouter);
+  routes () {
+    this.app.use(this.paths.uploads, uploadsRouter)
   }
 
-  middlewares() {
-    this.app.use(cors());
-    this.app.use(express.json());
+  middleware () {
+    this.app.use(cors())
+    this.app.use(express.json())
 
     this.app.use(fileUpload({
-      useTempFiles : true,
-      tempFileDir : '/tmp/',
-      createParentPath: true,
-    }));
+      useTempFiles: true,
+      tempFileDir: '/tmp/',
+      createParentPath: true
+    }))
   }
 
-  listen() {
-    this.server.listen(this.PORT, () => console.log('listening on port ', this.PORT));
+  listen () {
+    this.server.listen(this.PORT, () => console.log('listening on port ', this.PORT))
   }
 }
 
-module.exports = Server;
+module.exports = Server
