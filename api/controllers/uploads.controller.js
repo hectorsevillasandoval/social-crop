@@ -5,60 +5,60 @@ const { socialCropSizes } = require('../helpers/constants')
 
 const uploadImageToCloudinary = async (req, res) => {
   try {
-    const resizeOptions = {
-      transformation: [
-        {
-          height: 400,
-          width: 400,
-          crop: 'fill',
-          gravity: 'auto'
-        },
-        {
-          radius: 'max'
-        },
-        {
-          angle: 30
-        },
-        {
-          effect: 'trim'
-        },
-        {
-          effect: 'cartoonify'
-        }
-      ]
-    }
-    const resizeOptions2 = {
-      height: 400,
-      width: 400,
-      crop: 'fill',
-      gravity: 'auto'
-    }
-    const { name, tempFilePath } = req.files.file
-    const { public_id: publicId, format } = await cloudinary.uploader.upload(tempFilePath, { quality_analysis: true })
-    const profilePhotos = {}
-    const cloudinaryImagesResponse = []
+    const { tempFilePath } = req.files.file
+    const { socialMediaPicks } = req
+    const { public_id: publicId, format, ...info } = await cloudinary.uploader.upload(tempFilePath, {
+      quality_analysis: true,
+      public_id_prefix: 'social-crop',
+      auto_tagging: 0.6,
+      detection: 'coco_v1'
+    })
+    console.log(JSON.stringify(info))
+    let socialMediaNetworks = []
 
-    for (const [key, value] of Object.entries(socialCropSizes)) {
-      profilePhotos[key] = value.profile_photo
+    if (!socialMediaPicks) {
+      for (const [key, value] of Object.entries(socialCropSizes)) {
+        socialMediaNetworks.push({
+          socialNetwork: key, photoSizes: value
+        })
+      }
+    } else {
+      socialMediaNetworks = socialMediaPicks
     }
 
-    const urlPromises = []
-    for (const value of Object.values(profilePhotos).filter(elem => elem)) {
-      urlPromises.push(cloudinary.url(`${publicId}.${format}`, {
-        ...resizeOptions2,
-        height: value.height,
-        width: value.width
-      }))
-    }
-    console.log(urlPromises)
+    const socialCropUrls = socialMediaNetworks.map(elem => {
+      const URLs = []
+      for (const [sizeName, sizeValues] of Object.entries(elem.photoSizes)) {
+        URLs.push({
+          name: sizeName,
+          URL: cloudinaryResizeImage(publicId, format, sizeValues)
+        })
+      }
+      return {
+        [elem.socialNetwork]: URLs
+      }
+    })
 
-    return res.json(urlPromises)
+    return res.json(socialCropUrls)
   } catch (error) {
     res.status(400).json({
       msg: 'Something went wrong uploading',
       error
     })
   }
+}
+
+const cloudinaryResizeImage = (publicId, format, { width = 0, height = 0 }) => {
+  if (!(width && height)) throw new Error('Width and height are required')
+
+  const resizeOptions = {
+    height,
+    width,
+    crop: 'fill',
+    gravity: 'auto'
+  }
+
+  return cloudinary.url(`${publicId}.${format}`, resizeOptions)
 }
 
 const uploadFileFn = async (req, res) => {
