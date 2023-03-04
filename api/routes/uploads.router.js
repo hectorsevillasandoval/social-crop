@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 const validateFields = require('../middlewares/field-validator.middleware')
-const { validateFile, validateType } = require('../middlewares/validate-file.middleware')
+const { validateFile, validateType, selectedSocialMediaNetworks } = require('../middlewares/validate-file.middleware')
 const socialCropSizes = require('../helpers/constants')
 
 const uploadsController = require('../controllers/uploads.controller')
@@ -16,7 +16,7 @@ router
   .post('/',
     validateFile,
     validateType,
-    validateFields,
+    selectedSocialMediaNetworks,
     uploadsController.uploadImageToCloudinary)
 
 module.exports = router
