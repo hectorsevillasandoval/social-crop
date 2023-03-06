@@ -15,7 +15,7 @@
         <img src={socialCropLogoWhite} class="logo social-crop mx-auto mb-6 hidden dark:block" alt="SocialCrop Logo" />
       </a>
     </div>
-    <div class="description max-w-screen-md mx-auto">
+    <div class="description max-w-screen-md mx-auto hidden">
       <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta officia ratione tempora sequi! Facilis suscipit quibusdam aut laboriosam ipsa dolores praesentium ea laborum molestias sunt. Atque accusantium asperiores voluptates nam?</p>
     </div>
 
