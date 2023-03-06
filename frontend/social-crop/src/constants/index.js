@@ -15,7 +15,7 @@ const dropzoneConfiguration = {
   addRemoveLinks: true,
   clickable: true,
   previewsContainer: '.previews',
-  url: 'http://localhost:8081/api/v1/upload'
+  url: 'https://social-crop-api.hectorsevillasandoval.com/api/v1/upload'
 }
 
 const swalAlertConfigurations = {
