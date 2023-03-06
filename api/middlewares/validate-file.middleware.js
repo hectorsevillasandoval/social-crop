@@ -1,7 +1,8 @@
 const { allowedFileTypes, socialCropSizes } = require('../helpers/constants')
 
 const validateFile = (req, res, next) => {
-  if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
+  console.log(JSON.stringify(req.files))
+  if (!req.files || Object.keys(req.files).length === 0 || !req.files.photo) {
     res.status(400).json({ msg: 'No files were uploaded.' })
     return
   }
@@ -10,8 +11,8 @@ const validateFile = (req, res, next) => {
 }
 
 const validateType = (req, res, next) => {
-  const { file } = req.files
-  const extension = file.name.slice(file.name.lastIndexOf('.') + 1).toUpperCase()
+  const { photo } = req.files
+  const extension = photo.name.slice(photo.name.lastIndexOf('.') + 1).toUpperCase()
 
   if (!allowedFileTypes.includes(extension)) return res.status(500).json({ msg: `Invalid file extension: ${extension}` })
 
@@ -20,13 +21,14 @@ const validateType = (req, res, next) => {
 
 const selectedSocialMediaNetworks = (req, res, next) => {
   const { selected_networks: socialNetworks } = req.body
-  const cropThisOnes = JSON.parse(socialNetworks)
+  let cropToThisNetworks = []
+  if (!socialNetworks || !socialNetworks.length) return res.status(500).json({ status: 'error', msg: 'Please select a social network' })
 
-  if (!Array.isArray(cropThisOnes) || !cropThisOnes.length) return res.status(500).json({ msg: 'Please select a social network' })
+  cropToThisNetworks = [socialNetworks].flat()
 
   const socialMediaPicks = []
 
-  for (const network of cropThisOnes) {
+  for (const network of cropToThisNetworks) {
     if (!socialCropSizes[network]) continue
     socialMediaPicks.push({
       socialNetwork: network, photoSizes: socialCropSizes[network]

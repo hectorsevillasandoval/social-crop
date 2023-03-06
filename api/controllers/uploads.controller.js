@@ -5,7 +5,7 @@ const { socialCropSizes } = require('../helpers/constants')
 
 const uploadImageToCloudinary = async (req, res) => {
   try {
-    const { tempFilePath } = req.files.file
+    const { tempFilePath } = req.files.photo
     const { socialMediaPicks } = req
     const { public_id: publicId, format, ...info } = await cloudinary.uploader.upload(tempFilePath, {
       quality_analysis: true,
@@ -31,15 +31,21 @@ const uploadImageToCloudinary = async (req, res) => {
       for (const [sizeName, sizeValues] of Object.entries(elem.photoSizes)) {
         URLs.push({
           name: sizeName,
+          width: sizeValues.width,
+          height: sizeValues.height,
           URL: cloudinaryResizeImage(publicId, format, sizeValues)
         })
       }
       return {
-        [elem.socialNetwork]: URLs
+        name: elem.socialNetwork,
+        URLs
       }
     })
 
-    return res.json(socialCropUrls)
+    return res.json({
+      status: 'success',
+      croppedUrls: socialCropUrls
+    })
   } catch (error) {
     res.status(400).json({
       msg: 'Something went wrong uploading',
