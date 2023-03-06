@@ -114,7 +114,7 @@
     right: -30px;
     opacity: 0.5;
     font-size: 0;
-    background-image: url('./circle-xmark-solid.svg');
+    background-image: url('/circle-xmark-solid.svg');
     background-size: cover;
     display: block;
     width: 30px;
